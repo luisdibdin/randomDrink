@@ -6,11 +6,10 @@ mixers = ["Coke", "Fanta", "Orange Juice", "Chocolate Milk", "Oatly", "Water", "
 
 players = ["Ben", "Sam", "Luis", "Quandale"]
 
-def reduce_ratio(ratio_list: List[int]) -> List[int]:
-    gcd = np.gcd.reduce(ratio_list)
-    ratio_list_reduced = [int(i/gcd) for i in ratio_list]
+def reduced_ratio(int1: int, int2: int) -> int:
+    gcd = np.gcd.reduce([int1, int2])
 
-    return ratio_list_reduced
+    return int(int1/gcd), int(int2/gcd)
 
 np.random.shuffle(spirits)
 np.random.shuffle(mixers)
@@ -19,6 +18,6 @@ for i in range(len(players)):
     player = players[i]
     spirit = spirits[i]
     mixer = mixers[i]
-    ratio_list_reduced = reduce_ratio([np.random.randint(3, size=1)[0] + 1, np.random.randint(5, size=1)[0] + 1])
+    ratio1, ratio2 = reduced_ratio(np.random.randint(3, size=1)[0] + 1, np.random.randint(5, size=1)[0] + 1)
 
-    print(f"{player} will be drinking {spirit} with {mixer} at a ratio of {ratio_list_reduced[0]}:{ratio_list_reduced[1]}")
+    print(f"{player} will be drinking {spirit} with {mixer} at a ratio of {ratio1}:{ratio2}")
