@@ -1,9 +1,8 @@
+import random
 import numpy as np
 from typing import List, Tuple, Dict, Any
 from pathlib import Path
 import yaml
-import random
-from dataclasses import dataclass
 
 
 def load_yaml_values(path: Path, file_name: str) -> List[Any]:
@@ -20,25 +19,41 @@ def reduce_ratio(int1: int, int2: int) -> Tuple[int, int]:
     return int(int1 / gcd), int(int2 / gcd)
 
 
-config_path = Path("config")
-config: Dict[str, List[Any]] = {
-    f.stem: load_yaml_values(config_path, f.name) for f in config_path.iterdir()
-}
+class RandomDrink:
+    def __init__(self, config: Dict[str, List[Any]]) -> None:
+        self.players = config.get("players", [])
+        self.spirits = config.get("spirits", [])
+        self.mixers = config.get("mixers", [])
 
-players = config.get("players", [])
-spirits = config.get("spirits", [])
-mixers = config.get("mixers", [])
+    def run(self) -> None:
+        out = map(self.construct_sentence, self.players)
+        print(*out, sep="\n")
 
-np.random.shuffle(spirits)
-np.random.shuffle(mixers)
+    def construct_sentence(self, player) -> str:
+        return f"{player} will be drinking {self.random_spirit()} with {self.random_mixer()} at a ratio of {self.construct_ratio()}"
 
-for player in players:
-    spirit = spirits.pop()
-    mixer = mixers.pop()
-    ratio1, ratio2 = reduce_ratio(
-        np.random.randint(3, size=1)[0] + 1, np.random.randint(5, size=1)[0] + 1
-    )
+    def random_spirit(self) -> str:
+        return random.choice(self.spirits)
 
-    print(
-        f"{player} will be drinking {spirit} with {mixer} at a ratio of {ratio1}:{ratio2}"
-    )
+    def random_mixer(self) -> str:
+        return random.choice(self.mixers)
+
+    def construct_ratio(self) -> str:
+        ratio1, ratio2 = reduce_ratio(
+            np.random.randint(3, size=1)[0] + 1, np.random.randint(5, size=1)[0] + 1
+        )
+
+        return f"{ratio1}:{ratio2}"
+
+
+def main() -> None:
+    config_path = Path("config")
+    config: Dict[str, List[Any]] = {
+        f.stem: load_yaml_values(config_path, f.name) for f in config_path.iterdir()
+    }
+    random_drink = RandomDrink(config)
+    random_drink.run()
+
+
+if __name__ == "__main__":
+    main()
